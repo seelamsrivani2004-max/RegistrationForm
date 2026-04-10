@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import './App.css';
+import logo from './assets/logo.jpg';
 
 function App() {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     phone: '',
+    course: ''
   });
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,8 +24,8 @@ function App() {
     setStatus({ type: '', message: '' });
 
     // Validation
-    if (!formData.fullName || !formData.email || !formData.phone) {
-      setStatus({ type: 'error', message: 'Please fill in all fields.' });
+    if (!formData.fullName || !formData.email || !formData.phone || !formData.course) {
+      setStatus({ type: 'error', message: 'Please fill in all fields (including course).' });
       setIsLoading(false);
       return;
     }
@@ -40,8 +43,7 @@ function App() {
       const data = await response.json();
 
       if (response.ok) {
-        setStatus({ type: 'success', message: 'Registration successful! Information sent directly to our server.' });
-        setFormData({ fullName: '', email: '', phone: '' });
+        setIsSubmitted(true);
       } else {
         setStatus({ 
           type: 'error', 
@@ -66,65 +68,113 @@ function App() {
       <div className="blob blob-2"></div>
       
       <div className="form-card">
-        <div className="form-header">
-          <h1>Registration</h1>
-          <p>Join us today. Enter your details below.</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="reg-form">
-          <div className="input-group">
-            <label htmlFor="fullName">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              placeholder="e.g. John Doe"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="name@example.com"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="phone">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              placeholder="+1 (555) 000-0000"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading}>
-            {isLoading ? 'Processing...' : 'Register Now'}
-          </button>
-
-          {status.message && (
-            <div className={`status-message ${status.type}`}>
-              {status.message}
+        {isSubmitted ? (
+          <div className="success-screen">
+            <div className="success-icon">✓</div>
+            <h2>Registration Successful!</h2>
+            <p className="greeting-msg">Welcome to NovaHamoTech PVT LMT build your carrer here is the steps to grew up</p>
+            
+            <div className="steps-container">
+              <div className="step-item">
+                <span className="step-num">1</span>
+                <p>Verify your details in the confirmation email.</p>
+              </div>
+              <div className="step-item">
+                <span className="step-num">2</span>
+                <p>Join our orientation session on Monday.</p>
+              </div>
+              <div className="step-item">
+                <span className="step-num">3</span>
+                <p>Start your learning journey with our mentors.</p>
+              </div>
             </div>
-          )}
-        </form>
-        
-        <div className="form-footer">
-          <p>We'll send your details to <span>novahamotech@gmail.com</span></p>
-        </div>
+            
+            <button onClick={() => setIsSubmitted(false)} className="back-btn">
+              Register Another Student
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="logo-container">
+              <img src={logo} alt="Company Logo" className="company-logo" />
+            </div>
+            <div className="form-header">
+              <h1>Registration</h1>
+              <p>Join us today. Enter your details below.</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="reg-form">
+              <div className="input-group">
+                <label htmlFor="fullName">Full Name</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  placeholder="e.g. John Doe"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="name@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="phone">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="+1 (555) 000-0000"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="course">Select Course</label>
+                <select
+                  id="course"
+                  name="course"
+                  value={formData.course}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="" disabled>Choose a course...</option>
+                  <option value="Data Analysis with AIML">1. Data Analysis with AIML</option>
+                  <option value="Python full stack with AIML">2. Python full stack with AIML</option>
+                  <option value="Python with Flutter and AIML">3. Python with Flutter and AIML</option>
+                </select>
+              </div>
+
+              <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading}>
+                {isLoading ? 'Processing...' : 'Register Now'}
+              </button>
+
+              {status.message && (
+                <div className={`status-message ${status.type}`}>
+                  {status.message}
+                </div>
+              )}
+            </form>
+            
+            <div className="form-footer">
+              <p>We'll send your details to <span>novahamotech@gmail.com</span></p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

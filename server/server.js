@@ -10,7 +10,7 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 app.post("/register", async (req, res) => {
-  const { fullName, email, phone } = req.body;
+  const { fullName, email, phone, course } = req.body;
 
   try {
     let transporter = nodemailer.createTransport({
@@ -31,6 +31,7 @@ app.post("/register", async (req, res) => {
         Full Name: ${fullName}
         Email: ${email}
         Phone Number: ${phone}
+        Selected Course: ${course}
       `,
     };
 
